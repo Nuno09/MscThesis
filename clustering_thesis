@@ -759,3 +759,18 @@ keywords = {Graphical display, cluster analysis, clustering validity, classifica
 	eprint = {https://jcm.asm.org/content/49/11/3997.full.pdf},
 	journal = {Journal of Clinical Microbiology}
 }
+
+
+@article{pbm:pakhira,
+title = {Validity index for crisp and fuzzy clusters},
+journal = {Pattern Recognition},
+volume = {37},
+number = {3},
+pages = {487-501},
+year = {2004},
+issn = {0031-3203},
+doi = {https://doi.org/10.1016/j.patcog.2003.06.005},
+url = {https://www.sciencedirect.com/science/article/pii/S0031320303002838},
+author = {Malay K. Pakhira and Sanghamitra Bandyopadhyay and Ujjwal Maulik},
+keywords = {Clustering, Expectation maximization algorithm, Fuzzy c-means algorithm, k-Means algorithm, Unsupervised classification, Validity index}
+}
