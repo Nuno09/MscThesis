@@ -774,3 +774,5 @@ url = {https://www.sciencedirect.com/science/article/pii/S0031320303002838},
 author = {Malay K. Pakhira and Sanghamitra Bandyopadhyay and Ujjwal Maulik},
 keywords = {Clustering, Expectation maximization algorithm, Fuzzy c-means algorithm, k-Means algorithm, Unsupervised classification, Validity index}
 }
+
+@ARTICLE{xie:beni,  author={X. L. {Xie} and G. {Beni}},  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},   title={A validity measure for fuzzy clustering},   year={1991},  volume={13},  number={8},  pages={841-847},  doi={10.1109/34.85677}}
