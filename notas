@@ -1,0 +1,3 @@
+- Alterar o clusterval para receber matriz de distancias do AlicClu (ou qualquer outra) - assim não fica só para vectores N-dimensionais
+- Testar com o input do AliClu (pedir dataset)
+- Considerar average nos testes
