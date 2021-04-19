@@ -238,7 +238,6 @@ if __name__ == '__main__':
 						results_dict[key]['overlap'][str(overlap)] += 1.0
 						results_dict[key]['linkage'][str(link)] += 1.0
 						
-			print(results_dict)
 	
 	with open('Tests/dict.txt', 'w') as file:
      		file.write(str(results_dict.items()))
