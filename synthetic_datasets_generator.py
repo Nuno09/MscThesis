@@ -74,54 +74,54 @@ def add_noise(data, generator, percentage):
 	data[:int(len(data)*percentage)] = sample
 	return data
 
-def plot(data_normal, data_overlap, data_noise, data_density):
+def plot(data, y):
 
 	# Define the color maps for plots
 	color_map = plt.cm.get_cmap('RdYlBu')
 	color_map_discrete = matplotlib.colors.LinearSegmentedColormap.from_list("", ["red","black","magenta","blue"])
 	s = (plt.rcParams['lines.markersize']/2) ** 2
 
-	fig, ax = plt.subplots(nrows=2, ncols=2,figsize=(10,8))
+	fig, ax = plt.subplots(nrows=1, ncols=1,figsize=(10,8))
 
-	plt.subplot(221)
-	plt.scatter(data_normal[:, 0],data_normal[:, 1],
-			c=y1,
-          	vmin=min(y1),
-            vmax=max(y1),
+	plt.subplot(111)
+	plt.scatter(data[:, 0],data[:, 1],
+			c=y,
+          	vmin=min(y),
+            vmax=max(y),
           	cmap=color_map_discrete,
           	s=s)
 
 	plt.title("a", fontweight='bold')
 	
-	plt.subplot(222)
-	plt.scatter(data_overlap[:, 0],data_overlap[:, 1],
-			c=y2,
-          	vmin=min(y2),
-            vmax=max(y2),
-          	cmap=color_map_discrete,
-          	s=s)
+	#plt.subplot(222)
+	#plt.scatter(data_overlap[:, 0],data_overlap[:, 1],
+	#		c=y2,
+         # 	vmin=min(y2),
+          #  vmax=max(y2),
+          #	cmap=color_map_discrete,
+          #	s=s)
 			
-	plt.title("b", fontweight='bold')
+	#plt.title("b", fontweight='bold')
 	
-	plt.subplot(223)
-	plt.scatter(data_density[:, 0],data_density[:, 1],
-			c=y3,
-          	vmin=min(y3),
-            vmax=max(y3),
-          	cmap=color_map_discrete,
-          	s=s)
+	#plt.subplot(223)
+	#plt.scatter(data_density[:, 0],data_density[:, 1],
+	#		c=y3,
+         # 	vmin=min(y3),
+          #  vmax=max(y3),
+          #	cmap=color_map_discrete,
+          #	s=s)
 			
-	plt.title("c", fontweight='bold')
+	#plt.title("c", fontweight='bold')
 
-	plt.subplot(224)
-	plt.scatter(data_noise[:, 0],data_noise[:, 1],
-			c=y4,
-          	vmin=min(y4),
-            vmax=max(y4),
-          	cmap=color_map_discrete,
-          	s=s)
+	#plt.subplot(224)
+	#plt.scatter(data_noise[:, 0],data_noise[:, 1],
+	#		c=y4,
+         # 	vmin=min(y4),
+          #  vmax=max(y4),
+          #	cmap=color_map_discrete,
+          #	s=s)
 			
-	plt.title("d", fontweight='bold')
+	#plt.title("d", fontweight='bold')
 
 	plt.show()
 
@@ -136,6 +136,14 @@ def synthetic_tests():
 
 	c = Clusterval()
 	current_config = 0
+
+	w_overall.writerow(['index', 'Success rate'])
+	w_density.writerow(['index', '1', '4'])
+	w_dim.writerow(['index', '2', '4', '8'])
+	w_linkage.writerow(['index', 'single', 'complete', 'ward'])
+	w_nclusters.writerow(['index', '2', '4', '8'])
+	w_noise.writerow(['index', 'no', 'yes'])
+	w_overlap.writerow(['index', '1', '5'])
 
 	for configuration in configurations:
 		for partition in range(num_datasets):
@@ -173,7 +181,8 @@ def synthetic_tests():
 
 			if noise == 1:
 				dataset = add_noise(dataset, generator, noise)
-
+			
+			
 			c.max_k = int(math.sqrt(n_samples))
 			c.link = link
 			
@@ -200,18 +209,11 @@ def synthetic_tests():
 						results_dict[key]['density'][str(density)] += 1.0
 						results_dict[key]['overlap'][str(overlap)] += 1.0
 						results_dict[key]['linkage'][str(link)] += 1.0
+
 						
 	
 	with open('Tests/dict.txt', 'w') as file:
-     		file.write(str(results_dict.items()))
-     		
-	w_overall.writerow(['index','Success rate'])
-	w_density.writerow(['index','1', '4'])
-	w_dim.writerow(['index','2', '4', '8'])
-	w_linkage.writerow(['index','single', 'complete', 'ward'])
-	w_nclusters.writerow(['index','2', '4', '8'])
-	w_noise.writerow(['index','no', 'yes'])
-	w_overlap.writerow(['index','1', '5'])
+		file.write(str(results_dict.items()))
 
 	for key, val in results_dict.items():
 		w_overall.writerow([key,(val['overall']/n_configs_overall)])
