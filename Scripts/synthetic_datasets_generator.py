@@ -24,13 +24,13 @@ num_datasets = 5
 linkage = ['single', 'complete', 'ward']
 
 #write results in .csv
-w_overall = csv.writer(open("Tests/synthetic_test_overall.csv", "w"))
-w_linkage = csv.writer(open("Tests/synthetic_test_linkage.csv", "w"))
-w_nclusters = csv.writer(open("Tests/synthetic_test_nclusters.csv", "w"))
-w_dim = csv.writer(open("Tests/synthetic_test_dim.csv", "w"))
-w_overlap = csv.writer(open("Tests/synthetic_test_overlap.csv", "w"))
-w_density = csv.writer(open("Tests/synthetic_test_density.csv", "w"))
-w_noise = csv.writer(open("Tests/synthetic_test_noise.csv", "w"))
+w_overall = csv.writer(open("../Tests/synthetic_test_overall.csv", "w"))
+w_linkage = csv.writer(open("../Tests/synthetic_test_linkage.csv", "w"))
+w_nclusters = csv.writer(open("../Tests/synthetic_test_nclusters.csv", "w"))
+w_dim = csv.writer(open("../Tests/synthetic_test_dim.csv", "w"))
+w_overlap = csv.writer(open("../Tests/synthetic_test_overlap.csv", "w"))
+w_density = csv.writer(open("../Tests/synthetic_test_density.csv", "w"))
+w_noise = csv.writer(open("../Tests/synthetic_test_noise.csv", "w"))
 
 # Define the seed so that results can be reproduced
 seed = 11
@@ -93,35 +93,6 @@ def plot(data, y):
 
 	plt.title("a", fontweight='bold')
 	
-	#plt.subplot(222)
-	#plt.scatter(data_overlap[:, 0],data_overlap[:, 1],
-	#		c=y2,
-         # 	vmin=min(y2),
-          #  vmax=max(y2),
-          #	cmap=color_map_discrete,
-          #	s=s)
-			
-	#plt.title("b", fontweight='bold')
-	
-	#plt.subplot(223)
-	#plt.scatter(data_density[:, 0],data_density[:, 1],
-	#		c=y3,
-         # 	vmin=min(y3),
-          #  vmax=max(y3),
-          #	cmap=color_map_discrete,
-          #	s=s)
-			
-	#plt.title("c", fontweight='bold')
-
-	#plt.subplot(224)
-	#plt.scatter(data_noise[:, 0],data_noise[:, 1],
-	#		c=y4,
-         # 	vmin=min(y4),
-          #  vmax=max(y4),
-          #	cmap=color_map_discrete,
-          #	s=s)
-			
-	#plt.title("d", fontweight='bold')
 
 	plt.show()
 
@@ -212,7 +183,7 @@ def synthetic_tests():
 
 						
 	
-	with open('Tests/dict.txt', 'w') as file:
+	with open('../Tests/dict.txt', 'w') as file:
 		file.write(str(results_dict.items()))
 
 	for key, val in results_dict.items():
