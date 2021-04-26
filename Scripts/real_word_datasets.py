@@ -1,86 +1,94 @@
 import pandas as pd
 import xlrd
-from clusterval import Clusterval
+#from clusterval import Clusterval
+import sys
+sys.path.insert(1, '/home/nuno/Documentos/IST/Tese/Clusterval/')
+import clusterval
 import csv
 import math
+import itertools
 
 min_indices = ['VD', 'VI', 'MS', 'CVNN', 'XB', 'S_Dbw', 'DB', 'SD']
 
 linkage = ['single', 'complete', 'ward']
 
-results_dict = {'R': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
-                'FM': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
-                'J': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
-                'AW': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
-                'VD': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+algorithms = ['hierarchical', 'kmeans']
 
-                'H': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+results_dict = {'R': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'FM': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'J': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'AW': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'VD': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'H\'': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+                'H': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'F': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+                'H\'': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'VI': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+                'F': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'MS': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+                'VI': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'CVNN': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+                'MS': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'XB': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+                'CVNN': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'S_Dbw': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+                'XB': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'DB': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+                'S_Dbw': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'S': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+                'DB': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'SD': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+                'S': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'PBM': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}},
+                'SD': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'Dunn': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}}}
+                'PBM': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+
+                'Dunn': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}}}
 
 w_overall = csv.writer(open("../Tests/real_test_overall.csv", "w"))
 w_linkage = csv.writer(open("../Tests/real_test_linkage.csv", "w"))
+w_algorithm = csv.writer(open("../Tests/real_test_algorithm.csv", "w"))
 
 def pre_process():
 
-    datasets = {'breast_tissue': {'array': [], 'nc': 6},
-                'ecoli': {'array': [], 'nc': 8},
-                'glass': {'array': [], 'nc': 7},
-                'haberman': {'array': [], 'nc': 2},
-                'iris': {'array': [], 'nc': 3},
-                'parkinsons': {'array': [], 'nc': 2},
-                'vehicles': {'array': [], 'nc': 4},
-                'vertebral column': {'array': [], 'nc': 3},
-                'wine': {'array': [], 'nc': 3},
-                'yeast': {'array': [], 'nc': 10}}
+    datasets = {'breast_tissue': {'data': [], 'nc': 6},
+                'ecoli': {'data': [], 'nc': 8},
+                'glass': {'data': [], 'nc': 7},
+                'haberman': {'data': [], 'nc': 2},
+                'iris': {'data': [], 'nc': 3},
+                'parkinsons': {'data': [], 'nc': 2},
+                'vehicles': {'data': [], 'nc': 4},
+                'vertebral column': {'data': [], 'nc': 3},
+                'wine': {'data': [], 'nc': 3},
+                'yeast': {'data': [], 'nc': 10}}
+
 
     df_breast_tissue = pd.read_excel('../Datasets/BreastTissue.xls', index_col=0, sheet_name='Data')
 
     df_breast_tissue = df_breast_tissue.loc[:, df_breast_tissue.columns != 'Class']
     breast_tissue = df_breast_tissue.to_numpy()
-    datasets['breast_tissue']['array'] = breast_tissue
+    datasets['breast_tissue']['data'] = breast_tissue
 
     with open('../Datasets/ecoli.data', 'r') as f_ecoli:
 
         ecoli = [line.strip('\n').split('  ')[1:-1] for line in f_ecoli]
-        datasets['ecoli']['array'] = [[float(x) for x in s] for s in ecoli]
+        datasets['ecoli']['data'] = [[float(x) for x in s] for s in ecoli]
 
     with open('../Datasets/glass.data', 'r') as f_glass:
 
         glass = [line.split(',')[1:-1] for line in f_glass]
-        datasets['glass']['array'] = [[float(x) for x in s] for s in glass]
+        datasets['glass']['data'] = [[float(x) for x in s] for s in glass]
 
     with open('../Datasets/haberman.data', 'r') as f_haberman:
 
         haberman = [line.split(',')[:-1] for line in f_haberman]
-        datasets['haberman']['array'] = [[float(x) for x in s] for s in haberman]
+        datasets['haberman']['data'] = [[float(x) for x in s] for s in haberman]
 
     with open('../Datasets/iris.data', 'r') as f_iris:
 
         iris = [line.split(',')[:-1] for line in f_iris]
-        datasets['iris']['array'] = [[float(x) for x in s] for s in iris]
+        datasets['iris']['data'] = [[float(x) for x in s] for s in iris]
 
     with open('../Datasets/parkinsons.data', 'r') as f_parkinsons:
         header = next(f_parkinsons)
@@ -92,29 +100,29 @@ def pre_process():
             new_line = line.strip('\n').split(',')
             new_line.pop(status_idx)
             parkinsons.append(new_line[1:])
-        datasets['parkinsons']['array'] = [[float(x) for x in s] for s in parkinsons]
+        datasets['parkinsons']['data'] = [[float(x) for x in s] for s in parkinsons]
 
     with open('../Datasets/vehicles.dat', 'r') as f_vehicles:
 
         vehicles = [line.strip('\n').split(' ')[:-1] for line in f_vehicles]
-        datasets['vehicles']['array'] = [[float(x) for x in s] for s in vehicles]
+        datasets['vehicles']['data'] = [[float(x) for x in s] for s in vehicles]
 
 
     with open('../Datasets/vertebral_column.dat', 'r') as f_vert:
 
         vert = [line.strip('\n').split(' ')[:-1] for line in f_vert]
-        datasets['vertebral column']['array'] = [[float(x) for x in s] for s in vert]
+        datasets['vertebral column']['data'] = [[float(x) for x in s] for s in vert]
 
     with open('../Datasets/wine.data', 'r') as f_wine:
 
         wine = [line.strip('\n').split(',')[1:] for line in f_wine]
-        datasets['wine']['array'] = [[float(x) for x in s] for s in wine]
+        datasets['wine']['data'] = [[float(x) for x in s] for s in wine]
 
 
     with open('../Datasets/yeast.data', 'r') as f_yeast:
 
         yeast = [line.strip('\n').split('  ')[1:-1] for line in f_yeast]
-        datasets['yeast']['array'] = [[float(x) for x in s] for s in yeast]
+        datasets['yeast']['data'] = [[float(x) for x in s] for s in yeast]
 
 
     return datasets
@@ -122,31 +130,43 @@ def pre_process():
 def real_test(datasets):
     w_overall.writerow(['index', 'Success rate'])
     w_linkage.writerow(['index', 'single', 'complete', 'ward'])
+    w_algorithm.writerow(['index', 'hierarchical', 'kmeans'])
 
-    c = Clusterval()
+    configurations = list(itertools.product(*[linkage, algorithms]))
+    n_configs = float(len(configurations)*len(datasets))
+    n_configs_linkage = float(len(algorithms)*len(datasets))
+    n_configs_algorithm = float(len(linkage)*len(datasets))
+    print(configurations)
+    c = clusterval.Clusterval()
     for name, dataset in datasets.items():
-        c.max_k = int(math.sqrt(len(dataset['array'])))
-        for link in linkage:
-            print(' Linkage: ', link,'\n')
+        c.max_k = int(math.sqrt(len(dataset['data'])))
+        print('Dataset: ', name,'\n')
+        for config in configurations:
+            link = config[0]
+            algorithm = config[1]
+            print(' Linkage: ', link,', Algorithm: ',algorithm,'\n')
             c.link = link
 
-            eval = c.evaluate(dataset['array'])
+            eval = c.evaluate(dataset['data'], algorithm=algorithm)
 
             for key in results_dict.keys():
                 if key in min_indices:
                     if eval.output_df[key].idxmin() == dataset['nc']:
                         results_dict[key]['overall'] += 1.0
-                        results_dict[key]['linkage'][str(link)] += 1.0
+                        results_dict[key]['linkage'][link] += 1.0
+                        results_dict[key]['algorithm'][algorithm] += 1.0
 
                 else:
                     if eval.output_df[key].idxmax() == dataset['nc']:
                         results_dict[key]['overall'] += 1.0
-                        results_dict[key]['linkage'][str(link)] += 1.0
+                        results_dict[key]['linkage'][link] += 1.0
+                        results_dict[key]['algorithm'][algorithm] += 1.0
 
     for key, val in results_dict.items():
-        w_overall.writerow([key, (val['overall'] / len(datasets)*3)])
-        w_linkage.writerow([key, (val['linkage']['single'] / len(datasets)), (val['linkage']['complete'] / len(datasets)),
-             (val['linkage']['ward'] / len(datasets))])
+        w_overall.writerow([key, (val['overall'] / n_configs)])
+        w_linkage.writerow([key, (val['linkage']['single'] / n_configs_linkage), (val['linkage']['complete'] / n_configs_linkage),
+             (val['linkage']['ward'] / n_configs_linkage)])
+        w_algorithm.writerow([key, (val['algorithm']['hierarchical'] / n_configs_algorithm), (val['algorithm']['kmeans'] / n_configs_algorithm)])
 
 if __name__ == "__main__":
 
