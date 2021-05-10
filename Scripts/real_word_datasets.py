@@ -2,52 +2,60 @@ import pandas as pd
 import xlrd
 #from clusterval import Clusterval
 import sys
-sys.path.insert(1, '/home/nuno/Documentos/IST/Tese/Clusterval/')
+# insert at 1, 0 is the script path (or '' in REPL)
+sys.path.insert(1, '/home/nuno/Documentos/IST/Tese/Clusterval')
 import clusterval
+
 import csv
 import math
 import itertools
+import numpy as np
 
 min_indices = ['VD', 'VI', 'MS', 'CVNN', 'XB', 'S_Dbw', 'DB', 'SD']
 
-linkage = ['single', 'complete', 'ward']
+algorithm = ['single', 'complete', 'ward', 'kmeans']
 
-algorithms = ['hierarchical', 'kmeans']
+results_dict = {'AR': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-results_dict = {'R': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
-                'FM': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
-                'J': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
-                'AW': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
-                'VD': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'FM': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
+                'J': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
+                'AW': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
+                'VD': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'H': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'H': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'H\'': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
 
-                'F': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'F': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'VI': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'VI': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'MS': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'CD': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'CVNN': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'K': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'XB': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'Phi': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
+                
+                'RT': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'S_Dbw': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'SS': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'DB': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'CVNN': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'S': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'XB': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'SD': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'S_Dbw': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'PBM': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}},
+                'DB': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'Dunn': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'algorithm': {'hierarchical': 0.0, 'kmeans': 0.0}}}
+                'S': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
+
+                'SD': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
+
+                'PBM': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
+
+                'Dunn': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}}}
 
 w_overall = csv.writer(open("../Tests/real_test_overall.csv", "w"))
-w_linkage = csv.writer(open("../Tests/real_test_linkage.csv", "w"))
 w_algorithm = csv.writer(open("../Tests/real_test_algorithm.csv", "w"))
 
 def pre_process():
@@ -129,46 +137,39 @@ def pre_process():
 
 def real_test(datasets):
     w_overall.writerow(['index', 'Success rate'])
-    w_linkage.writerow(['index', 'single', 'complete', 'ward'])
-    w_algorithm.writerow(['index', 'hierarchical', 'kmeans'])
+    w_algorithm.writerow(['index', 'single', 'complete', 'ward', 'kmeans'])
 
-    configurations = list(itertools.product(*[linkage, algorithms]))
+    configurations = ['single', 'complete', 'ward', 'kmeans']
     n_configs = float(len(configurations)*len(datasets))
-    n_configs_linkage = float(len(algorithms)*len(datasets))
-    n_configs_algorithm = float(len(linkage)*len(datasets))
-    print(configurations)
+    n_configs_algorithm = float(len(datasets))
     c = clusterval.Clusterval()
     for name, dataset in datasets.items():
-        c.max_k = int(math.sqrt(len(dataset['data'])))
+        c.max_k = int(math.sqrt(len(dataset['data']))/2)
         print('Dataset: ', name,'\n')
         for config in configurations:
-            link = config[0]
-            algorithm = config[1]
-            print(' Linkage: ', link,', Algorithm: ',algorithm,'\n')
-            c.link = link
-
-            eval = c.evaluate(dataset['data'], algorithm=algorithm)
+            algorithm = config
+            print('Algorithm: ',algorithm,'\n')
+            c.algorithm = algorithm
+            eval = c.evaluate(dataset['data'])
 
             for key in results_dict.keys():
                 if key in min_indices:
                     if eval.output_df[key].idxmin() == dataset['nc']:
                         results_dict[key]['overall'] += 1.0
-                        results_dict[key]['linkage'][link] += 1.0
                         results_dict[key]['algorithm'][algorithm] += 1.0
 
                 else:
                     if eval.output_df[key].idxmax() == dataset['nc']:
                         results_dict[key]['overall'] += 1.0
-                        results_dict[key]['linkage'][link] += 1.0
                         results_dict[key]['algorithm'][algorithm] += 1.0
 
     for key, val in results_dict.items():
         w_overall.writerow([key, (val['overall'] / n_configs)])
-        w_linkage.writerow([key, (val['linkage']['single'] / n_configs_linkage), (val['linkage']['complete'] / n_configs_linkage),
-             (val['linkage']['ward'] / n_configs_linkage)])
-        w_algorithm.writerow([key, (val['algorithm']['hierarchical'] / n_configs_algorithm), (val['algorithm']['kmeans'] / n_configs_algorithm)])
+        w_algorithm.writerow([key, (val['algorithm']['single'] / n_configs_algorithm), (val['algorithm']['complete'] / n_configs_algorithm), (val['algorithm']['ward'] / n_configs_algorithm), (val['algorithm']['kmeans'] / n_configs_algorithm)])
 
 if __name__ == "__main__":
+    from scipy.spatial.distance import pdist
+
 
     datasets = pre_process()
     real_test(datasets)

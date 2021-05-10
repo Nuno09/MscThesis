@@ -1,4 +1,8 @@
-from clusterval import Clusterval
+#from clusterval import Clusterval
+import sys
+# insert at 1, 0 is the script path (or '' in REPL)
+sys.path.insert(1, '/home/nuno/Documentos/IST/Tese/Clusterval')
+import clusterval
 from sklearn.datasets import make_blobs
 import itertools
 import math
@@ -21,51 +25,55 @@ noise = [0, 0.1]
 dens = [1, 4]
 overlap = [1.5, 5.0]
 num_datasets = 5
-linkage = ['single', 'complete', 'ward']
+algorithm = ['single', 'complete', 'ward', 'kmeans']
 
 #write results in .csv
 w_overall = csv.writer(open("../Tests/synthetic_test_overall.csv", "w"))
-w_linkage = csv.writer(open("../Tests/synthetic_test_linkage.csv", "w"))
 w_nclusters = csv.writer(open("../Tests/synthetic_test_nclusters.csv", "w"))
 w_dim = csv.writer(open("../Tests/synthetic_test_dim.csv", "w"))
 w_overlap = csv.writer(open("../Tests/synthetic_test_overlap.csv", "w"))
 w_density = csv.writer(open("../Tests/synthetic_test_density.csv", "w"))
 w_noise = csv.writer(open("../Tests/synthetic_test_noise.csv", "w"))
+w_algorithm = csv.writer(open("../Tests/synthetic_test_algorithm.csv", "w"))
 
 # Define the seed so that results can be reproduced
 seed = 11
-rand_state = 11
 generator = np.random.mtrand._rand
+rand_state = 11
+
 
 min_indices = ['VD', 'VI', 'MS', 'CVNN', 'XB', 'S_Dbw', 'DB', 'SD']
 	
-results_dict = {'R': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}}, 
-			 	'FM': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-			  	'J': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}}, 
-			 	'AW': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-               	'VD': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-			  	'H': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}}, 
-			 	'H\'': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-			  	'F': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-               	'VI': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-			  	'MS': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-			  	'CVNN': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-			  	'XB': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-               	'S_Dbw': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-			  	'DB': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-			  	'S': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-			  	'SD': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
-				'PBM': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}}, 
-				'Dunn': {'overall': 0.0, 'linkage': {'single': 0.0, 'complete': 0.0, 'ward': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}}}
+results_dict = {'AR': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+			  	'FM': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+			  	'J': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+			 	'AW': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+               	'VD': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+			  	'H': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+			 	'F': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+               	'VI': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+               	'CD': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+               	'K': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+               	'Phi': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+               	'RT': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+               	'SS': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+               	'CVNN': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+			  	'XB': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+               	'S_Dbw': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+			  	'DB': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+			  	'S': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+			  	'SD': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+				'PBM': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}},
+				'Dunn': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}, 'num_clusters': {'2': 0.0, '4': 0.0, '8': 0.0}, 'dim': {'2': 0.0, '4': 0.0, '8': 0.0}, 'overlap': {'1.5': 0.0, '5.0': 0.0}, 'density': {'1': 0.0, '4': 0.0}, 'noise': {'0': 0.0, '0.1': 0.0}}}
 
-configurations = list(itertools.product(*[K,dim,noise,dens,overlap,linkage]))
+configurations = list(itertools.product(*[K,dim,noise,dens,overlap,algorithm]))
 n_configs_overall = float(len(configurations)*num_datasets)
-n_configs_nclusters = float(len(dim)*len(noise)*len(dens)*len(overlap)*num_datasets*len(linkage))
-n_configs_dim = float(len(K)*len(noise)*len(dens)*len(overlap)*num_datasets*len(linkage))
-n_configs_noise = float(len(dim)*len(K)*len(dens)*len(overlap)*num_datasets*len(linkage))
-n_configs_dens = float(len(dim)*len(noise)*len(K)*len(overlap)*num_datasets*len(linkage))
-n_configs_overlap = float(len(dim)*len(noise)*len(dens)*len(K)*num_datasets*len(linkage))
-n_configs_linkage = float(len(dim)*len(noise)*len(dens)*len(overlap)*num_datasets*len(K))
+n_configs_nclusters = float(len(dim)*len(noise)*len(dens)*len(overlap)*num_datasets*len(algorithm))
+n_configs_dim = float(len(K)*len(noise)*len(dens)*len(overlap)*num_datasets*len(algorithm))
+n_configs_noise = float(len(dim)*len(K)*len(dens)*len(overlap)*num_datasets*len(algorithm))
+n_configs_dens = float(len(dim)*len(noise)*len(K)*len(overlap)*num_datasets*len(algorithm))
+n_configs_overlap = float(len(dim)*len(noise)*len(dens)*len(K)*num_datasets*len(algorithm))
+n_configs_algorithm = float(len(dim)*len(noise)*len(dens)*len(overlap)*num_datasets*len(K))
 
 def add_noise(data, generator, percentage):
 	sample = data[:int(len(data)*percentage)]
@@ -78,7 +86,7 @@ def plot(data, y):
 
 	# Define the color maps for plots
 	color_map = plt.cm.get_cmap('RdYlBu')
-	color_map_discrete = matplotlib.colors.LinearSegmentedColormap.from_list("", ["red","black","magenta","blue"])
+	color_map_discrete = matplotlib.colors.LinearSegmentedColormap.from_list("", ["red","black","magenta","blue", "green", "yellow", 'xkcd:dark orange', 'xkcd:powder blue'])
 	s = (plt.rcParams['lines.markersize']/2) ** 2
 
 	fig, ax = plt.subplots(nrows=1, ncols=1,figsize=(10,8))
@@ -103,18 +111,19 @@ def synthetic_tests():
 	print('Number of configurations for each noise possibilty: ', n_configs_noise, '\n')
 	print('Number of configurations for each density possibilty: ', n_configs_dens, '\n')
 	print('Number of configurations for each overlap possibilty: ', n_configs_overlap, '\n')
-	print('Number of configurations for each linkage possibilty: ', n_configs_linkage, '\n')
+	print('Number of configurations for each algorithm possibilty: ', n_configs_algorithm, '\n')
 
-	c = Clusterval()
+	c = clusterval.Clusterval()
 	current_config = 0
 
 	w_overall.writerow(['index', 'Success rate'])
 	w_density.writerow(['index', '1', '4'])
 	w_dim.writerow(['index', '2', '4', '8'])
-	w_linkage.writerow(['index', 'single', 'complete', 'ward'])
 	w_nclusters.writerow(['index', '2', '4', '8'])
 	w_noise.writerow(['index', 'no', 'yes'])
 	w_overlap.writerow(['index', '1', '5'])
+	w_overlap.writerow(['index', '1', '5'])
+	w_algorithm.writerow(['index', 'single', 'complete', 'ward', 'kmeans'])
 
 	for configuration in configurations:
 		for partition in range(num_datasets):
@@ -126,7 +135,7 @@ def synthetic_tests():
 			noise = configuration[2]
 			density = configuration[3]
 			overlap = configuration[4]
-			link = configuration[5]
+			algorithm = configuration[5]
 
 			if density == 1:
 				dataset, y = make_blobs(
@@ -154,10 +163,9 @@ def synthetic_tests():
 				dataset = add_noise(dataset, generator, noise)
 			
 			
-			c.max_k = int(math.sqrt(n_samples))
-			c.link = link
-			
-			
+			c.max_k = int(math.sqrt(n_samples)/2)
+			c.algorithm = algorithm
+
 			eval = c.evaluate(dataset)
 			
 			for key in results_dict.keys():
@@ -169,7 +177,7 @@ def synthetic_tests():
 						results_dict[key]['noise'][str(noise)] += 1.0
 						results_dict[key]['density'][str(density)] += 1.0
 						results_dict[key]['overlap'][str(overlap)] += 1.0
-						results_dict[key]['linkage'][str(link)] += 1.0
+						results_dict[key]['algorithm'][str(algorithm)] += 1.0
 
 				else:
 					if eval.output_df[key].idxmax() == centers:
@@ -179,7 +187,7 @@ def synthetic_tests():
 						results_dict[key]['noise'][str(noise)] += 1.0
 						results_dict[key]['density'][str(density)] += 1.0
 						results_dict[key]['overlap'][str(overlap)] += 1.0
-						results_dict[key]['linkage'][str(link)] += 1.0
+						results_dict[key]['algorithm'][str(algorithm)] += 1.0
 
 						
 	
@@ -190,10 +198,10 @@ def synthetic_tests():
 		w_overall.writerow([key,(val['overall']/n_configs_overall)])
 		w_density.writerow([key,(val['density']['1']/n_configs_dens), (val['density']['4']/n_configs_dens)])
 		w_dim.writerow([key, (val['dim']['2']/n_configs_dim), (val['dim']['4']/n_configs_dim), (val['dim']['8']/n_configs_dim)])
-		w_linkage.writerow([key, (val['linkage']['single']/n_configs_linkage), (val['linkage']['complete']/n_configs_linkage), (val['linkage']['ward']/n_configs_linkage)])
 		w_nclusters.writerow([key, (val['num_clusters']['2']/n_configs_nclusters), (val['num_clusters']['4']/n_configs_nclusters), (val['num_clusters']['8']/n_configs_nclusters)])
 		w_noise.writerow([key,(val['noise']['0']/n_configs_noise), (val['noise']['0.1']/n_configs_noise)])
 		w_overlap.writerow([key,(val['overlap']['1.5']/n_configs_overlap), (val['overlap']['5.0']/n_configs_overlap)])
+		w_algorithm.writerow([key, (val['algorithm']['single'] / n_configs_algorithm), (val['algorithm']['complete'] / n_configs_algorithm), (val['algorithm']['ward'] / n_configs_algorithm), (val['algorithm']['kmeans'] / n_configs_algorithm)])
 
 
 
@@ -201,38 +209,39 @@ if __name__ == '__main__':
 
 	
 
-	#data_normal, y1 = make_blobs(
-	#	n_samples=500,
-	#	n_features=2,
-	#	centers=4,
-	#	random_state=rand_state
-	#	)
+#	data_normal, y1 = make_blobs(
+#		n_samples=500,
+#		n_features=2,
+#		centers=4,
+#		random_state=rand_state
+#		)
 	
-	#data_overlap, y2 = make_blobs(
-	#	n_samples=500,
-	#	n_features=2,
-	#	centers=4,
-	#	cluster_std=5.0,
-	#	random_state=rand_state
-	#	)
+#	data_overlap, y2 = make_blobs(
+#		n_samples=500,
+#		n_features=2,
+#		centers=4,
+#		cluster_std=5.0,
+#		random_state=rand_state
+#		)
 		
-	#data_density, y3 = make_blobs(
-	#	n_samples=[375,41,42,42],
-	#	n_features=2,
-	#	centers=None,
-	#	random_state=rand_state
-	#	)
+#	data_density, y3 = make_blobs(
+#		n_samples=[375,41,42,42],
+#		n_features=2,
+#		centers=None,
+#		random_state=rand_state
+#		)
 	
-	#data_noise, y4 = make_blobs(
-	#	n_samples=500,
-	#	n_features=2,
-	#	centers=4,
-	#	random_state=rand_state
-	#	)
+#	data_noise, y4 = make_blobs(
+#		n_samples=500,
+#		n_features=2,
+#		centers=4,
+#		random_state=rand_state
+#		)
 
 	#data_noise = add_noise(data_noise, generator, 0.1)
 	
-	#plot(data_normal, data_overlap, data_noise, data_density)
+
 
 	synthetic_tests()
+	#plot(data_normal, y1)
 

@@ -4,9 +4,9 @@ import pandas as pd
 import numpy as np
 
 idx = ['S_Dbw','SD', 'XB', 'CVNN', 'VI', 'H', 'J', 'F', 'FM', 'VD', 'Dunn', 'S', 'PBM', "H'", 'AW', 'R', 'DB', 'MS']
-idx_real = ['S','S_Dbw', 'Dunn', 'J', 'VD', 'H', 'F', 'VI', 'FM', 'PBM', 'DB', 'XB', 'SD', "AW", 'H\'', 'R', 'MS', 'CVNN']
+idx_real = ['S','S_Dbw', 'Dunn', 'J', 'VD', 'H', 'F', 'VI', 'FM', 'PBM', 'DB', 'XB', 'SD', "AW", 'K', 'AR', 'CD', 'CVNN', 'RT', 'SS', 'Phi']
 bar_width = 0.50
-pos_bar = np.arange(18)
+pos_bar = np.arange(21)
 
 def plot_overall():
     df = pd.read_csv('../Tests/synthetic_test_overall.csv')
@@ -21,47 +21,6 @@ def plot_overall():
     ax.set_ylabel('Success rate')
     ax.set_xticks(pos_bar)
     ax.set_xticklabels(labels)
-    ax.legend()
-
-    plt.show()
-
-def plot_linkage():
-    df = pd.read_csv('../Tests/synthetic_test_linkage.csv')
-
-    #all dataframes order like overall
-    df_single = df.get(['index', 'single'])
-    df_single.loc[:, 'index'] = df_single.loc[:, 'index'].astype("category")
-    df_single['index'].cat.set_categories(idx, inplace=True)
-    df_single = df_single.sort_values(['index'])
-
-
-    df_complete = df.get(['index', 'complete'])
-    df_complete.loc[:, 'index'] = df_complete.loc[:, 'index'].astype("category")
-    df_complete['index'].cat.set_categories(idx, inplace=True)
-    df_complete = df_complete.sort_values(['index'])
-
-
-    df_ward = df.get(['index', 'ward'])
-    df_ward.loc[:, 'index'] = df_ward.loc[:, 'index'].astype("category")
-    df_ward['index'].cat.set_categories(idx, inplace=True)
-    df_ward = df_ward.sort_values(['index'])
-
-    rates = [round(df_single['single']*100).to_numpy(), round(df_complete['complete']*100).to_numpy(), round(df_ward['ward']*100).to_numpy()]
-
-    fig, ax = plt.subplots()
-
-    ax.bar(pos_bar, rates[0], bar_width/3,
-                    label="Single")
-
-    ax.bar(pos_bar + bar_width/3, rates[1],
-                    bar_width/3, label="Complete")
-
-    ax.bar(pos_bar + (2*(bar_width)/3), rates[2],
-                     bar_width/3, label="Ward")
-
-    ax.set_ylabel('Success rate')
-    ax.set_xticks(pos_bar + (2*(bar_width/3)) / 3)
-    ax.set_xticklabels(idx)
     ax.legend()
 
     plt.show()
@@ -238,72 +197,47 @@ def plot_noise():
     plt.show()
 
 
-def plot_real_linkage():
-    df = pd.read_csv('../Tests/real_test_linkage.csv')
+def plot_real_algorithm():
+    df = pd.read_csv('../Tests/real_test_algorithm.csv')
 
-    #all dataframes order like overall
     df_single = df.get(['index', 'single'])
     df_single.loc[:, 'index'] = df_single.loc[:, 'index'].astype("category")
     df_single['index'].cat.set_categories(idx_real, inplace=True)
     df_single = df_single.sort_values(['index'])
-
 
     df_complete = df.get(['index', 'complete'])
     df_complete.loc[:, 'index'] = df_complete.loc[:, 'index'].astype("category")
     df_complete['index'].cat.set_categories(idx_real, inplace=True)
     df_complete = df_complete.sort_values(['index'])
 
-
     df_ward = df.get(['index', 'ward'])
     df_ward.loc[:, 'index'] = df_ward.loc[:, 'index'].astype("category")
     df_ward['index'].cat.set_categories(idx_real, inplace=True)
     df_ward = df_ward.sort_values(['index'])
-
-    rates = [round(df_single['single']*100).to_numpy(), round(df_complete['complete']*100).to_numpy(), round(df_ward['ward']*100).to_numpy()]
-
-    fig, ax = plt.subplots()
-
-    ax.bar(pos_bar, rates[0], bar_width/3,
-                    label="Single")
-
-    ax.bar(pos_bar + bar_width/3, rates[1],
-                    bar_width/3, label="Complete")
-
-    ax.bar(pos_bar + (2*(bar_width)/3), rates[2],
-                     bar_width/3, label="Ward")
-
-    ax.set_ylabel('Success rate')
-    ax.set_xticks(pos_bar + (2*(bar_width/3)) / 3)
-    ax.set_xticklabels(idx_real)
-    ax.legend()
-
-    plt.show()
-def plot_real_algorithm():
-    df = pd.read_csv('../Tests/real_test_algorithm.csv')
-
-    df_hierarchical = df.get(['index', 'hierarchical'])
-    df_hierarchical.loc[:, 'index'] = df_hierarchical.loc[:, 'index'].astype("category")
-    df_hierarchical['index'].cat.set_categories(idx_real, inplace=True)
-    df_hierarchical = df_hierarchical.sort_values(['index'])
-    
 
     df_kmeans = df.get(['index', 'kmeans'])
     df_kmeans.loc[:, 'index'] = df_kmeans.loc[:, 'index'].astype("category")
     df_kmeans['index'].cat.set_categories(idx_real, inplace=True)
     df_kmeans = df_kmeans.sort_values(['index'])
 
-    rates = [round(df_hierarchical['hierarchical'] * 100).to_numpy(), round(df_kmeans['kmeans'] * 100).to_numpy()]
+    rates = [round(df_single['single'] * 100).to_numpy(),round(df_complete['complete'] * 100).to_numpy(),round(df_ward['ward'] * 100).to_numpy(), round(df_kmeans['kmeans'] * 100).to_numpy()]
 
     fig, ax = plt.subplots()
 
-    ax.bar(pos_bar, rates[0], bar_width/2,
-                label="Hierachcical")
+    ax.bar(pos_bar, rates[0], bar_width / 4,
+           label="Single")
 
-    ax.bar(pos_bar + bar_width/2, rates[1],
-                bar_width/2, label="Kmeans")
+    ax.bar(pos_bar + bar_width / 4, rates[1],
+           bar_width / 4, label="Complete")
+
+    ax.bar(pos_bar + (2 * (bar_width / 4)), rates[2],
+           bar_width / 4, label="Ward")
+
+    ax.bar(pos_bar + (3 * (bar_width / 4)), rates[3],
+           bar_width / 4, label="Kmeans")
 
     ax.set_ylabel('Success rate')
-    ax.set_xticks(pos_bar + (bar_width/2) / 2)
+    ax.set_xticks(pos_bar + (3*(bar_width/4)) / 4)
     ax.set_xticklabels(idx_real)
     ax.legend()
 
@@ -329,7 +263,7 @@ def plot_real_overall():
 
 if __name__ == '__main__':
 
-    plot_overall()
+    #plot_overall()
 
     #plot_linkage()
 
@@ -343,8 +277,8 @@ if __name__ == '__main__':
 
     #plot_noise()
 
-    plot_real_overall()
+    #plot_real_overall()
 
     #plot_real_linkage()
 
-    #plot_real_algorithm()
+    plot_real_algorithm()
