@@ -122,7 +122,6 @@ def synthetic_tests():
 	w_nclusters.writerow(['index', '2', '4', '8'])
 	w_noise.writerow(['index', 'no', 'yes'])
 	w_overlap.writerow(['index', '1', '5'])
-	w_overlap.writerow(['index', '1', '5'])
 	w_algorithm.writerow(['index', 'single', 'complete', 'ward', 'kmeans'])
 
 	for configuration in configurations:
