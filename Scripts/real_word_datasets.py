@@ -29,8 +29,6 @@ results_dict = {'AR': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 
 
                 'VI': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'CD': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
-
                 'K': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
                 'Phi': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
@@ -57,6 +55,7 @@ results_dict = {'AR': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 
 
 w_overall = csv.writer(open("../Tests/real_test_overall.csv", "w"))
 w_algorithm = csv.writer(open("../Tests/real_test_algorithm.csv", "w"))
+w_result = csv.writer(open("../Tests/result.csv", "w"))
 
 def pre_process():
 
@@ -138,13 +137,14 @@ def pre_process():
 def real_test(datasets):
     w_overall.writerow(['index', 'Success rate'])
     w_algorithm.writerow(['index', 'single', 'complete', 'ward', 'kmeans'])
+    w_result.writerow(['index', 'dataset', 'algorithm', 'predicted', 'predicted_value', 'true', 'true_value' ])
 
     configurations = ['single', 'complete', 'ward', 'kmeans']
     n_configs = float(len(configurations)*len(datasets))
     n_configs_algorithm = float(len(datasets))
     c = clusterval.Clusterval()
     for name, dataset in datasets.items():
-        c.max_k = int(math.sqrt(len(dataset['data']))/2)
+        c.max_k = int(math.sqrt((len(dataset['data'])/2) + 1))
         print('Dataset: ', name,'\n')
         for config in configurations:
             algorithm = config
@@ -154,14 +154,31 @@ def real_test(datasets):
 
             for key in results_dict.keys():
                 if key in min_indices:
+                    predicted = eval.output_df[key].idxmin()
+                    predicted_value = eval.output_df.loc[predicted, key]
+                    true_value = eval.output_df.loc[dataset['nc'], key]
                     if eval.output_df[key].idxmin() == dataset['nc']:
                         results_dict[key]['overall'] += 1.0
                         results_dict[key]['algorithm'][algorithm] += 1.0
+                        
 
                 else:
+                    predicted = eval.output_df[key].idxmax()
+                    predicted_value = eval.output_df.loc[predicted, key]
+                    true_value = eval.output_df.loc[dataset['nc'], key]
                     if eval.output_df[key].idxmax() == dataset['nc']:
                         results_dict[key]['overall'] += 1.0
                         results_dict[key]['algorithm'][algorithm] += 1.0
+
+                w_result.writerow([key, name, algorithm, predicted, predicted_value, dataset['nc'], true_value])  
+
+            with open('../Tests/results_dict.txt', 'a') as file:
+                file.write('\n')
+                file.write(name)
+                file.write('\n')
+                file.write(algorithm)
+                file.write('\n')
+                file.write(str(eval.output_df))
 
     for key, val in results_dict.items():
         w_overall.writerow([key, (val['overall'] / n_configs)])
