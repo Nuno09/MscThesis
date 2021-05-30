@@ -1,0 +1,111 @@
+digraph G {
+	rankdir=LR size="8,5"
+	A
+	B
+	A -> B [label=47]
+	B
+	G
+	B -> G [label=151]
+	G
+	C
+	G -> C [label=57]
+	C
+	Z
+	C -> Z [label=1677]
+	A
+	B
+	A -> B [label=1820]
+	B
+	G
+	B -> G [label=293]
+	G
+	C
+	G -> C [label=85]
+	C
+	Z
+	C -> Z [label=463]
+	A
+	B
+	A -> B [label=1272]
+	B
+	Z
+	B -> Z [label=3642]
+	A
+	B
+	A -> B [label=1977]
+	B
+	C
+	B -> C [label=574]
+	C
+	Z
+	C -> Z [label=556]
+	A
+	B
+	A -> B [label=273]
+	B
+	Z
+	B -> Z [label=2010]
+	A
+	B
+	A -> B [label=427]
+	B
+	C
+	B -> C [label=515]
+	C
+	Z
+	C -> Z [label=1142]
+	A
+	B
+	A -> B [label=196]
+	B
+	G
+	B -> G [label=1001]
+	G
+	Z
+	G -> Z [label=528]
+	A
+	B
+	A -> B [label=49]
+	B
+	Z
+	B -> Z [label=996]
+	A
+	B
+	A -> B [label=1306]
+	B
+	Z
+	B -> Z [label=1670]
+	A
+	B
+	A -> B [label=278]
+	B
+	Z
+	B -> Z [label=1579]
+	A
+	B
+	A -> B [label=387]
+	B
+	Z
+	B -> Z [label=3096]
+	A
+	B
+	A -> B [label=699]
+	B
+	C
+	B -> C [label=273]
+	C
+	Z
+	C -> Z [label=1093]
+	A
+	B
+	A -> B [label=329]
+	B
+	E
+	B -> E [label=265]
+	E
+	C
+	E -> C [label=411]
+	C
+	Z
+	C -> Z [label=2403]
+}

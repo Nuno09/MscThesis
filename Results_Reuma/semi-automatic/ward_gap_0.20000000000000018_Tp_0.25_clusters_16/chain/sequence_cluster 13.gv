@@ -1,0 +1,132 @@
+digraph G {
+	rankdir=LR size="8,5"
+	D
+	Z
+	D -> Z [label=2622]
+	D
+	Z
+	D -> Z [label=73]
+	D
+	B
+	D -> B [label=387]
+	B
+	Z
+	B -> Z [label=1600]
+	D
+	Z
+	D -> Z [label=325]
+	D
+	Z
+	D -> Z [label=1953]
+	D
+	Z
+	D -> Z [label=2288]
+	D
+	Z
+	D -> Z [label=450]
+	D
+	Z
+	D -> Z [label=259]
+	D
+	Z
+	D -> Z [label=504]
+	D
+	Z
+	D -> Z [label=3277]
+	D
+	Z
+	D -> Z [label=1821]
+	D
+	Z
+	D -> Z [label=68]
+	D
+	Z
+	D -> Z [label=1764]
+	D
+	Z
+	D -> Z [label=3587]
+	D
+	Z
+	D -> Z [label=1611]
+	D
+	H
+	D -> H [label=571]
+	H
+	Z
+	H -> Z [label=46]
+	D
+	Z
+	D -> Z [label=1087]
+	D
+	Z
+	D -> Z [label=800]
+	D
+	Z
+	D -> Z [label=694]
+	D
+	Z
+	D -> Z [label=3938]
+	D
+	Z
+	D -> Z [label=4008]
+	D
+	Z
+	D -> Z [label=1692]
+	D
+	Z
+	D -> Z [label=1828]
+	D
+	Z
+	D -> Z [label=2453]
+	D
+	Z
+	D -> Z [label=1802]
+	D
+	H
+	D -> H [label=1312]
+	H
+	Z
+	H -> Z [label=407]
+	D
+	Z
+	D -> Z [label=2926]
+	D
+	Z
+	D -> Z [label=2259]
+	D
+	Z
+	D -> Z [label=4050]
+	D
+	Z
+	D -> Z [label=3187]
+	D
+	Z
+	D -> Z [label=3284]
+	D
+	Z
+	D -> Z [label=382]
+	D
+	Z
+	D -> Z [label=415]
+	D
+	Z
+	D -> Z [label=1430]
+	D
+	B
+	D -> B [label=412]
+	B
+	Z
+	B -> Z [label=801]
+	D
+	Z
+	D -> Z [label=296]
+	D
+	Z
+	D -> Z [label=688]
+	D
+	Z
+	D -> Z [label=253]
+	D
+	Z
+	D -> Z [label=1558]
+}

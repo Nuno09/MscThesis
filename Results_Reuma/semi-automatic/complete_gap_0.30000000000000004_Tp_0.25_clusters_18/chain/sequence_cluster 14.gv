@@ -1,0 +1,231 @@
+digraph G {
+	rankdir=LR size="8,5"
+	B
+	A
+	B -> A [label=120]
+	A
+	Z
+	A -> Z [label=2187]
+	B
+	A
+	B -> A [label=1721]
+	A
+	G
+	A -> G [label=772]
+	G
+	Z
+	G -> Z [label=42]
+	B
+	D
+	B -> D [label=212]
+	D
+	A
+	D -> A [label=1335]
+	A
+	Z
+	A -> Z [label=2675]
+	B
+	A
+	B -> A [label=55]
+	A
+	Z
+	A -> Z [label=2682]
+	B
+	A
+	B -> A [label=245]
+	A
+	Z
+	A -> Z [label=3130]
+	B
+	A
+	B -> A [label=253]
+	A
+	G
+	A -> G [label=420]
+	G
+	Z
+	G -> Z [label=1842]
+	B
+	A
+	B -> A [label=1051]
+	A
+	Z
+	A -> Z [label=877]
+	B
+	A
+	B -> A [label=699]
+	A
+	G
+	A -> G [label=690]
+	G
+	Z
+	G -> Z [label=249]
+	B
+	A
+	B -> A [label=800]
+	A
+	G
+	A -> G [label=472]
+	G
+	Z
+	G -> Z [label=277]
+	B
+	A
+	B -> A [label=943]
+	A
+	Z
+	A -> Z [label=504]
+	B
+	A
+	B -> A [label=3675]
+	A
+	Z
+	A -> Z [label=197]
+	B
+	A
+	B -> A [label=3446]
+	A
+	Z
+	A -> Z [label=1003]
+	B
+	A
+	B -> A [label=206]
+	A
+	Z
+	A -> Z [label=536]
+	B
+	A
+	B -> A [label=632]
+	A
+	Z
+	A -> Z [label=1015]
+	B
+	A
+	B -> A [label=30]
+	A
+	Z
+	A -> Z [label=168]
+	B
+	A
+	B -> A [label=1861]
+	A
+	Z
+	A -> Z [label=1032]
+	B
+	A
+	B -> A [label=1000]
+	A
+	D
+	A -> D [label=1307]
+	D
+	G
+	D -> G [label=1520]
+	G
+	Z
+	G -> Z [label=864]
+	B
+	A
+	B -> A [label=1492]
+	A
+	Z
+	A -> Z [label=1969]
+	B
+	A
+	B -> A [label=270]
+	A
+	Z
+	A -> Z [label=1521]
+	B
+	A
+	B -> A [label=666]
+	A
+	Z
+	A -> Z [label=2704]
+	B
+	A
+	B -> A [label=1216]
+	A
+	G
+	A -> G [label=533]
+	G
+	Z
+	G -> Z [label=864]
+	B
+	A
+	B -> A [label=504]
+	A
+	Z
+	A -> Z [label=246]
+	B
+	A
+	B -> A [label=442]
+	A
+	F
+	A -> F [label=1266]
+	F
+	Z
+	F -> Z [label=1375]
+	B
+	A
+	B -> A [label=499]
+	A
+	Z
+	A -> Z [label=1114]
+	B
+	D
+	B -> D [label=538]
+	D
+	A
+	D -> A [label=268]
+	A
+	G
+	A -> G [label=1301]
+	G
+	Z
+	G -> Z [label=885]
+	B
+	A
+	B -> A [label=568]
+	A
+	Z
+	A -> Z [label=2131]
+	B
+	A
+	B -> A [label=665]
+	A
+	G
+	A -> G [label=1494]
+	G
+	Z
+	G -> Z [label=1821]
+	B
+	A
+	B -> A [label=197]
+	A
+	G
+	A -> G [label=279]
+	G
+	F
+	G -> F [label=203]
+	F
+	Z
+	F -> Z [label=856]
+	B
+	A
+	B -> A [label=2592]
+	A
+	Z
+	A -> Z [label=1346]
+	B
+	A
+	B -> A [label=901]
+	A
+	Z
+	A -> Z [label=855]
+	B
+	A
+	B -> A [label=14]
+	A
+	Z
+	A -> Z [label=941]
+}
