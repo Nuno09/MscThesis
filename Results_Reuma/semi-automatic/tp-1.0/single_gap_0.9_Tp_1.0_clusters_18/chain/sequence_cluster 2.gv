@@ -1,0 +1,12 @@
+digraph G {
+	rankdir=LR size="8,5"
+	C
+	F
+	C -> F [label=252]
+	F
+	G
+	F -> G [label=460]
+	G
+	Z
+	G -> Z [label=917]
+}
