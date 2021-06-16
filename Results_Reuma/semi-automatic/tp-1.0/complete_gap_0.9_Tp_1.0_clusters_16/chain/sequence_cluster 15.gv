@@ -1,0 +1,39 @@
+digraph G {
+	rankdir=LR size="8,5"
+	B
+	Z
+	B -> Z [label=2277]
+	B
+	C
+	B -> C [label=830]
+	B
+	H
+	B -> H [label=1113]
+	B
+	G
+	B -> G [label=516]
+	B
+	F
+	B -> F [label=1393]
+	C
+	G
+	C -> G [label=266]
+	C
+	Z
+	C -> Z [label=1165]
+	C
+	H
+	C -> H [label=644]
+	C
+	F
+	C -> F [label=1164]
+	G
+	Z
+	G -> Z [label=1004]
+	H
+	Z
+	H -> Z [label=378]
+	F
+	Z
+	F -> Z [label=281]
+}
