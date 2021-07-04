@@ -1,6 +1,0 @@
-digraph G {
-	rankdir=LR size="8,5"
-	F
-	Z
-	F -> Z [label=1109]
-}

@@ -4,6 +4,7 @@ import xlrd
 import sys
 # insert at 1, 0 is the script path (or '' in REPL)
 sys.path.insert(1, '/home/nuno/Documentos/IST/Tese/Clusterval')
+
 import clusterval
 
 import csv
@@ -11,7 +12,7 @@ import math
 import itertools
 import numpy as np
 
-min_indices = ['VD', 'VI', 'MS', 'CVNN', 'XB', 'S_Dbw', 'DB', 'SD']
+min_indices = ['VD', 'VI', 'MS', 'CVNN', 'XB', 'SDbw', 'DB', 'SD']
 
 algorithm = ['single', 'complete', 'ward', 'kmeans']
 
@@ -41,7 +42,7 @@ results_dict = {'AR': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 
 
                 'XB': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
-                'S_Dbw': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
+                'SDbw': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
                 'DB': {'overall': 0.0, 'algorithm': {'single': 0.0, 'complete': 0.0, 'ward': 0.0, 'kmeans': 0.0}},
 
